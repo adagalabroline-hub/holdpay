@@ -17,8 +17,11 @@ Official references:
 - Stores role, KYC status, and seller/agent business-verification status on the Odoo contact record. These fields are restricted to Odoo system administrators; website and API onboarding set only the logged-in user's role and pending state.
 - Sends incomplete profiles to an app-KYC pending page. Only an Odoo administrator can change the status from the backend partner form.
 - Provides Odoo models and authenticated JSON-RPC routes for listings, deals, pickup milestones, mediation cases, and post-completion reviews.
+- Lets verified buyers propose written service agreements to existing verified sellers, with scope, KES price, milestone allocations, and a per-job choice between per-stage or final client approval.
+- Requires provider acceptance before work starts; stores work-submission and buyer-approval status without collecting or releasing funds.
 - Restricts portal model access to reads; controlled API routes validate the caller and business state before creating or updating records.
 - Does not collect KYC documents, process payments, or provide a provider-backed checkout/settlement integration.
+- Does not yet support sender-created parcels for unregistered recipients, SMS outbox delivery, pickup codes, or USSD verification.
 
 Website role enrollment is not KYC verification. A production phone app must submit an authenticated verification result to a secure backend before any account is marked verified. The website must not trust a client-side flag.
 
@@ -78,6 +81,7 @@ Odoo's published [eCommerce product documentation](https://www.odoo.com/document
 - Decide whether sellers and agents are individuals, registered businesses, or both; define document requirements and verification ownership in the app.
 - Add server-enforced access rules for catalogue publication, checkout, agent assignment, reviews, and order transitions once those Odoo modules are implemented.
 - Configure privacy notices, retention/deletion schedules, backups, access control, incident response, and Kenya-specific legal/regulatory review.
+- Before adding parcel delivery, define custody and liability with a carrier and pickup operators. Select SMS and USSD providers, provision a short code, authenticate their server callbacks, protect and expire one-time pickup codes, and define failed-SMS/code recovery and handover records. The proposed flow is documented in [BACKEND-API.md](./BACKEND-API.md).
 
 The addon now provides a backend prototype, but it is not a production marketplace or escrow system. Payment methods are recorded as preferences only; new orders remain `not_configured` until a real provider integration is built. The API details and example requests are in [BACKEND-API.md](./BACKEND-API.md).
 

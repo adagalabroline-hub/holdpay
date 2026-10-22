@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_holdpay_service_contract_list" model="ir.ui.view">
+    <field name="name">holdpay.service.contract.list</field>
+    <field name="model">holdpay.service.contract</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="reference"/>
+        <field name="title"/>
+        <field name="category"/>
+        <field name="buyer_id"/>
+        <field name="seller_id"/>
+        <field name="agreed_price"/>
+        <field name="approval_mode"/>
+        <field name="payment_status"/>
+        <field name="state"/>
+      </list>
+    </field>
+  </record>
+  <record id="view_holdpay_service_contract_form" model="ir.ui.view">
+    <field name="name">holdpay.service.contract.form</field>
+    <field name="model">holdpay.service.contract</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <group>
+              <field name="reference" readonly="1"/>
+              <field name="title" readonly="1"/>
+              <field name="category" readonly="1"/>
+              <field name="buyer_id" readonly="1"/>
+              <field name="seller_id" readonly="1"/>
+            </group>
+            <group>
+              <field name="agreed_price" readonly="1"/>
+              <field name="currency_id" readonly="1"/>
+              <field name="approval_mode" readonly="1"/>
+              <field name="payment_status" readonly="1"/>
+              <field name="state"/>
+            </group>
+          </group>
+          <group>
+            <field name="scope" readonly="1"/>
+            <field name="milestone_ids" readonly="1">
+              <list>
+                <field name="sequence"/>
+                <field name="description"/>
+                <field name="amount"/>
+                <field name="state"/>
+              </list>
+            </field>
+          </group>
+          <group string="Concern">
+            <field name="concern_by_id" readonly="1"/>
+            <field name="concern_note" readonly="1"/>
+          </group>
+          <div class="alert alert-warning" role="alert">
+            Client approvals in this prototype are records only. No payment is collected, held, or released by this agreement.
+          </div>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="action_holdpay_service_contracts" model="ir.actions.act_window">
+    <field name="name">Service agreements</field>
+    <field name="res_model">holdpay.service.contract</field>
+    <field name="view_mode">list,form</field>
+  </record>
+  <menuitem id="menu_holdpay_service_contracts" name="Service agreements" parent="menu_holdpay_root" action="action_holdpay_service_contracts" sequence="40" groups="base.group_system"/>
+</odoo>

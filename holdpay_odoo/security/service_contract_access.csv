@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_holdpay_service_contract_portal,holdpay.service.contract portal,model_holdpay_service_contract,base.group_portal,1,0,0,0
+access_holdpay_service_milestone_portal,holdpay.service.milestone portal,model_holdpay_service_milestone,base.group_portal,1,0,0,0
+access_holdpay_service_contract_admin,holdpay.service.contract admin,model_holdpay_service_contract,base.group_system,1,1,1,1
+access_holdpay_service_milestone_admin,holdpay.service.milestone admin,model_holdpay_service_milestone,base.group_system,1,1,1,1

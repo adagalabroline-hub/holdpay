@@ -33,8 +33,10 @@ styles.css
 app.js
   Client-side browser prototype behavior: sample marketplace and role
   dashboards, browser-local demo data, signup/sign-in dialogs, listings,
-  simulated orders/milestones, reviews, and mediation walkthrough interactions.
-  It is not connected to the Odoo backend.
+  simulated orders/milestones, buyer-proposed service contracts, written work
+  scope, seller acceptance, stage submission, buyer approval choices, reviews,
+  and concern walkthrough interactions. It is not connected to the Odoo
+  backend.
 
 holdpay-logo.svg
   Reusable vector logo displayed by the browser prototype.
@@ -42,15 +44,19 @@ holdpay-logo.svg
 BACKEND-API.md
   Documents the Odoo JSON-RPC API, session authentication approach, request
   examples, role and KYC gates, current payment limitations, and unimplemented
-  production integrations.
+  production integrations. Also documents the proposed Nairobi-to-Kakamega
+  parcel flow for an unregistered recipient using SMS instructions and
+  pickup-code verification through an agent's future USSD provider.
 
 ODOO-DEPLOYMENT.md
   Odoo 18 hosting and installation guidance, addon scope, production decisions,
-  and the proposed HoldPay-for-Odoo extension.
+  and the proposed HoldPay-for-Odoo extension, including future parcel and
+  SMS/USSD provider requirements.
 
 PARTNERSHIP-NOTES.md
   Product and partnership concept notes, pilot discussion, and prototype
-  limitations for prospective payment and commerce partners.
+  limitations for prospective payment and commerce partners, including the
+  proposed parcel-to-unregistered-recipient use case and its SMS/USSD needs.
 
 FLUTTER SOURCE PROJECT: holdpay_mobile/
 ---------------------------------------
@@ -320,6 +326,12 @@ holdpay_odoo/controllers/main.py
   and reviews. It enforces server-side role, verification, and ownership
   checks. Payment is not configured or processed.
 
+holdpay_odoo/controllers/service_api.py
+  Authenticated Odoo JSON-RPC endpoints for discovering verified seller
+  service providers, proposing and accepting written service agreements,
+  submitting and approving agreed work milestones, and recording concerns.
+  Approval records do not collect or release money.
+
 holdpay_odoo/data/holdpay_sequence.xml
   Defines the human-readable sequence used to assign references to HoldPay
   orders/deals.
@@ -335,6 +347,11 @@ holdpay_odoo/models/marketplace.py
   Defines Odoo records for seller listings, orders/deals, mediation cases, and
   buyer reviews, including server-side data constraints and order references.
 
+holdpay_odoo/models/service_contract.py
+  Defines service agreements and ordered milestones, including service
+  category, buyer/provider, written scope, agreed price, client approval mode,
+  concern status, and validation that milestone amounts equal the agreed total.
+
 holdpay_odoo/security/ir.model.access.csv
   Grants portal users read-only model access and grants Odoo system
   administrators full model access. API writes are performed through
@@ -343,6 +360,14 @@ holdpay_odoo/security/ir.model.access.csv
 holdpay_odoo/security/holdpay_rules.xml
   Record rules limiting portal reads to published/owned listings and deals,
   cases, and reviews involving the logged-in user.
+
+holdpay_odoo/security/service_contract_access.csv
+  Grants portal users read-only access to service agreements and milestones;
+  grants Odoo system administrators full access.
+
+holdpay_odoo/security/service_contract_rules.xml
+  Limits portal reads of service agreements and milestones to their client or
+  provider participants.
 
 holdpay_odoo/static/src/css/holdpay.css
   Styles the HoldPay landing page, account onboarding, pending-verification,
@@ -355,6 +380,13 @@ holdpay_odoo/views/partner_views.xml
 holdpay_odoo/views/marketplace_views.xml
   Defines administrator list/form views and the HoldPay menu for listings,
   orders/payment status records, and mediation cases.
+
+holdpay_odoo/views/service_contract_views.xml
+  Defines administrator list/form views and menu access for service
+  agreements, their milestones, and recorded concerns.
+
+holdpay_odoo/data/service_contract_sequence.xml
+  Defines the human-readable reference sequence for service agreements.
 
 holdpay_odoo/views/website_templates.xml
   Defines QWeb pages for the HoldPay landing page, role selection, pending

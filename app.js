@@ -68,6 +68,7 @@ function initialState() {
     users: DEMO_USERS.map((user) => ({ ...user })),
     listings: SAMPLE_LISTINGS.map((listing) => ({ ...listing })),
     orders: [],
+    serviceContracts: [],
     reviews: [],
     sessionEmail: ''
   };
@@ -97,6 +98,7 @@ function loadState() {
         }))
     ];
     parsed.listings = [...SAMPLE_LISTINGS, ...parsed.listings.filter((listing) => !listing.sample)];
+    parsed.serviceContracts = Array.isArray(parsed.serviceContracts) ? parsed.serviceContracts : [];
     return parsed;
   } catch (error) {
     console.error('Could not load HoldPay demo data:', error);
@@ -211,6 +213,16 @@ function renderMarketplace() {
         </div>
       </section>
 
+      <section class="service-intro">
+        <div>
+          <span class="eyebrow">Services and skilled work</span>
+          <h2>Agree the work before it begins.</h2>
+          <p>Set a written scope, total price and milestones with a verified seller. Choose together whether work is approved stage by stage or at the end.</p>
+          <p class="service-safety-note">This browser demo records approvals only. It does not collect, hold, or release payment.</p>
+        </div>
+        <button class="button button-primary" type="button" data-action="request-service">Plan a service job <span aria-hidden="true">→</span></button>
+      </section>
+
       <section class="marketplace-section" id="marketplace">
         <div class="section-bar">
           <div><span class="eyebrow">The marketplace</span><h2>Good things, close to home.</h2></div>
@@ -230,7 +242,7 @@ function renderMarketplace() {
         <p>Every role has its own simple dashboard in this prototype.</p>
         <div class="role-grid">
           ${roleCard('buyer', 'Buyer', 'Browse products, start deals, collect orders, and leave a review.')}
-          ${roleCard('seller', 'Seller', 'Add catalogue listings and follow incoming orders.')}
+          ${roleCard('seller', 'Seller', 'Offer products or agree a written scope, price, and work milestones with a client.')}
           ${roleCard('agent', 'Pickup agent', 'Record order handovers and flag delivery concerns.')}
         </div>
       </section>
@@ -279,6 +291,9 @@ function renderDashboard(user) {
     if (user.role === 'seller') return order.sellerEmail === user.email;
     return order.agentEmail === user.email;
   }).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const relevantContracts = state.serviceContracts
+    .filter((contract) => contract.buyerEmail === user.email || contract.sellerEmail === user.email)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   let workspace;
   if (user.role === 'seller') {
@@ -299,8 +314,9 @@ function renderDashboard(user) {
   } else {
     workspace = `
       <section class="panel">
-        <div class="panel-heading"><h2>Browse marketplace</h2><button class="button button-outline button-small" type="button" data-action="marketplace">Explore listings</button></div>
-        <p class="muted-copy">Start a demo order from a listing. The payment step only changes the sample order status; it does not charge or hold money.</p>
+        <div class="panel-heading"><h2>Start something new</h2><button class="button button-outline button-small" type="button" data-action="marketplace">Explore listings</button></div>
+        <p class="muted-copy">Buy goods or agree a written service scope, price, and approval plan with a verified seller.</p>
+        <button class="button button-primary button-small" type="button" data-action="request-service">Plan a service job</button>
       </section>`;
   }
 
@@ -320,6 +336,15 @@ function renderDashboard(user) {
       <div class="dashboard-grid">
         <div>
           ${workspace}
+          ${user.role !== 'agent' ? `
+            <section class="panel service-contract-panel">
+              <div class="panel-heading">
+                <div><span class="eyebrow">Work agreements</span><h2>${user.role === 'seller' ? 'Client service requests' : 'Your service jobs'}</h2></div>
+                ${user.role === 'buyer' ? '<button class="button button-primary button-small" type="button" data-action="request-service">+ Plan a job</button>' : ''}
+              </div>
+              <p class="muted-copy">Agree scope, total price, milestone amounts, and the approval plan before work starts. Demo approvals never send money.</p>
+              <div class="service-contract-list">${relevantContracts.length ? relevantContracts.map((contract) => serviceContractCard(contract, user)).join('') : `<div class="empty-state"><strong>${user.role === 'seller' ? 'No client requests yet.' : 'No service agreements yet.'}</strong>${user.role === 'seller' ? 'Agreed job requests will appear here.' : 'Create a written job request for a verified seller.'}</div>`}</div>
+            </section>` : ''}
           <section class="panel">
             <div class="panel-heading"><h2>${user.role === 'agent' ? 'Assigned pickup deals' : 'Your deals'}</h2><span class="muted-copy">${relevantOrders.length} total</span></div>
             <div class="deal-list">${relevantOrders.length ? relevantOrders.map((order) => dealCard(order, user)).join('') : '<div class="empty-state"><strong>No deals here yet.</strong>When a deal starts, its progress will appear in this space.</div>'}</div>
@@ -414,6 +439,65 @@ function dealCard(order, user) {
     </article>`;
 }
 
+function serviceContractCard(contract, user) {
+  const status = {
+    proposed: 'Awaiting seller agreement',
+    active: 'Work in progress',
+    disputed: 'Concern raised',
+    completed: 'Work approved · no payment sent',
+    cancelled: 'Cancelled'
+  }[contract.status] || 'In progress';
+  const milestones = contract.milestones || [];
+  const nextPending = contract.approvalMode === 'final'
+    ? milestones.find((milestone) => milestone.status === 'pending')
+    : milestones.find((milestone) => milestone.status !== 'approved');
+  const nextDelivered = milestones.find((milestone) => milestone.status === 'delivered');
+  let actions = '';
+  if (contract.status === 'proposed' && user.email === contract.sellerEmail) {
+    actions = `<button class="button button-primary button-small" type="button" data-service-action="accept" data-contract="${escapeHtml(contract.id)}">Agree to scope and start</button>`;
+  } else if (contract.status === 'active' && user.email === contract.sellerEmail && nextPending?.status === 'pending') {
+    const priorStagesReady = contract.approvalMode === 'final' ||
+      milestones.slice(0, milestones.indexOf(nextPending)).every((milestone) => milestone.status === 'approved');
+    if (priorStagesReady) {
+      actions = `<button class="button button-primary button-small" type="button" data-service-action="submit-stage" data-contract="${escapeHtml(contract.id)}" data-milestone="${escapeHtml(nextPending.id)}">Mark stage delivered</button>`;
+    }
+  } else if (contract.status === 'active' && user.email === contract.buyerEmail) {
+    if (contract.approvalMode === 'per-milestone' && nextDelivered) {
+      actions = `<button class="button button-primary button-small" type="button" data-service-action="approve-stage" data-contract="${escapeHtml(contract.id)}" data-milestone="${escapeHtml(nextDelivered.id)}">Approve this stage</button>`;
+    } else if (contract.approvalMode === 'final' && milestones.length && milestones.every((milestone) => milestone.status === 'delivered')) {
+      actions = `<button class="button button-primary button-small" type="button" data-service-action="approve-final" data-contract="${escapeHtml(contract.id)}">Approve completed job</button>`;
+    }
+  }
+  if (contract.status === 'active') {
+    actions += `<button class="button button-danger button-small" type="button" data-service-action="raise-concern" data-contract="${escapeHtml(contract.id)}">Raise a concern</button>`;
+  }
+  if (contract.status === 'disputed') {
+    const agreed = (contract.resolvedBy || []).includes(user.email);
+    actions += agreed
+      ? '<span class="muted-copy">You confirmed the discussion; waiting for the other party.</span>'
+      : `<button class="button button-outline button-small" type="button" data-service-action="resolve-concern" data-contract="${escapeHtml(contract.id)}">Mark discussion resolved</button>`;
+  }
+  const otherParty = user.email === contract.buyerEmail
+    ? `Provider: ${escapeHtml(contract.sellerName)}`
+    : `Client: ${escapeHtml(contract.buyerName)}`;
+  const approvalName = contract.approvalMode === 'final' ? 'One final approval' : 'Approve each stage';
+  return `
+    <article class="service-contract-card">
+      <div class="deal-top">
+        <div><span class="eyebrow">${escapeHtml(contract.category)}</span><h3>${escapeHtml(contract.title)} · ${money(contract.price)}</h3>
+          <p class="deal-meta">${otherParty} · Agreement ${escapeHtml(contract.id)}</p>
+          <p class="deal-meta">${approvalName}</p>
+        </div>
+        <span class="status-pill ${contract.status === 'disputed' ? 'status-issue' : contract.status === 'completed' ? 'status-paid' : ''}">${status}</span>
+      </div>
+      <p class="service-scope">${escapeHtml(contract.scope)}</p>
+      <ol class="service-milestones">${milestones.map((milestone, index) => `<li class="${milestone.status}"><span>${index + 1}. ${escapeHtml(milestone.description)}</span><strong>${money(milestone.amount)}</strong><small>${milestone.status === 'approved' ? 'Approved in demo' : milestone.status === 'delivered' ? 'Awaiting client approval' : 'Not submitted'}</small></li>`).join('')}</ol>
+      ${contract.concernNote ? `<p class="concern-note"><strong>Concern:</strong> ${escapeHtml(contract.concernNote)}</p>` : ''}
+      ${contract.status === 'completed' ? '<p class="form-help">Client work approval was recorded for demonstration only. No funds were collected or released.</p>' : ''}
+      ${actions ? `<div class="deal-actions">${actions}</div>` : ''}
+    </article>`;
+}
+
 function renderHowItWorks() {
   openDialog(`
     <span class="eyebrow">Demo flow</span><h2 id="dialog-title">Walk through a deal</h2>
@@ -423,8 +507,9 @@ function renderHowItWorks() {
       <li>Simulate payment, then switch to seller and mark the parcel sent.</li>
       <li>Switch to pickup agent and confirm receipt.</li>
       <li>Return as buyer to collect, approve, and leave a review.</li>
+      <li>As buyer, plan a service job with a written scope and milestone amounts; switch to seller to accept and submit work, then return as buyer to approve the agreed stages.</li>
     </ol>
-    <p class="demo-banner">Every payment step is a status simulation only. This concept does not connect to M-Pesa, Airtel Money, a bank, a courier, or a real agent network.</p>
+    <p class="demo-banner">Every payment step is a status simulation only. Service approval does not send money. This concept does not connect to M-Pesa, Airtel Money, a bank, a courier, or a real agent network.</p>
     <button class="button button-primary" type="button" data-close-dialog>Got it</button>`);
 }
 
@@ -473,6 +558,38 @@ function showListingForm() {
       <label>Photo URL (optional)<input name="image" type="url" placeholder="https://…" /></label>
       <p class="form-error" id="listing-error" role="alert"></p>
       <button class="button button-primary" type="submit">Publish demo listing</button>
+    </form>`);
+}
+
+function showServiceContractForm() {
+  const user = currentUser();
+  if (!user || user.role !== 'buyer' || !user.demo) {
+    showToast('Sign in as the buyer demo to try service agreements. New web accounts must complete app KYC first.');
+    return;
+  }
+  const providers = state.users.filter((candidate) =>
+    candidate.role === 'seller' && (candidate.demo || candidate.kycStatus === 'verified')
+  );
+  if (!providers.length) {
+    showToast('No verified service providers are available in this demo.');
+    return;
+  }
+  openDialog(`
+    <span class="eyebrow">Service agreement · demo</span><h2 id="dialog-title">Plan a service job</h2>
+    <p class="dialog-lede">Write down the work, total price, and stages. The seller must accept before the agreement becomes active.</p>
+    <form class="form-grid" id="service-contract-form">
+      <label>Job title<input name="title" maxlength="100" placeholder="e.g. Renovate a two-room home" required /></label>
+      <label>Service type<select name="category" required><option value="">Choose a category</option><option value="construction">Construction or renovation</option><option value="repairs">Repairs and maintenance</option><option value="professional">Professional services</option><option value="delivery">Delivery</option><option value="other">Other services</option></select></label>
+      <label>Choose a verified seller / service provider<select name="seller" required>${providers.map((provider) => `<option value="${escapeHtml(provider.email)}">${escapeHtml(provider.name)}</option>`).join('')}</select></label>
+      <label>Written work scope<textarea name="scope" maxlength="1000" placeholder="Describe the work, materials, location, and what counts as completion." required></textarea></label>
+      <label>Agreed total price in KES<input name="price" type="number" min="1" max="1000000000" step="1" required /></label>
+      <label>When will the client approve?
+        <select name="approvalMode" required><option value="per-milestone">Approve each stage separately</option><option value="final">Approve the full job at the end</option></select>
+      </label>
+      <label>Milestones and amounts<textarea name="milestones" maxlength="1200" placeholder="One stage per line: description | amount&#10;Site visit and plan | 5000&#10;Main work phase | 25000&#10;Inspection and handover | 5000" required></textarea></label>
+      <p class="form-help">Each line must use “stage description | amount”; milestone amounts must add up to the agreed total. Client approval here only updates demo status. No payment is sent.</p>
+      <p class="form-error" id="service-contract-error" role="alert"></p>
+      <button class="button button-primary" type="submit">Send agreement proposal</button>
     </form>`);
 }
 
@@ -541,7 +658,7 @@ function setDemoRole(role) {
 }
 
 document.addEventListener('click', (event) => {
-  const target = event.target.closest('[data-action], [data-role-signup], [data-demo-role], [data-buy], [data-order-action], [data-filter], [data-view], [data-home], [data-close]');
+  const target = event.target.closest('[data-action], [data-role-signup], [data-demo-role], [data-buy], [data-order-action], [data-service-action], [data-filter], [data-view], [data-home], [data-close]');
   if (!target) return;
 
   if (target.hasAttribute('data-close')) {
@@ -567,6 +684,8 @@ document.addEventListener('click', (event) => {
     showToast('Switched to marketplace view.');
   } else if (target.dataset.action === 'add-listing') {
     showListingForm();
+  } else if (target.dataset.action === 'request-service') {
+    showServiceContractForm();
   } else if (target.dataset.action === 'reset-demo') {
     openDialog(`<span class="eyebrow">Reset this browser</span><h2 id="dialog-title">Clear demo activity?</h2><p class="dialog-lede">This removes local demo accounts, listings, and orders, then restores the sample marketplace.</p><button class="button button-danger" type="button" data-confirm-reset>Reset demo data</button>`);
   } else if (target.dataset.roleSignup) {
@@ -592,6 +711,12 @@ document.addEventListener('click', (event) => {
     }
   } else if (target.dataset.orderAction) {
     handleOrderAction(target.dataset.orderAction, target.dataset.order);
+  } else if (target.dataset.serviceAction) {
+    handleServiceContractAction(
+      target.dataset.serviceAction,
+      target.dataset.contract,
+      target.dataset.milestone
+    );
   } else if (target.hasAttribute('data-confirm-reset')) {
     state = initialState();
     if (saveState()) {
@@ -623,6 +748,10 @@ document.addEventListener('submit', (event) => {
     handleOrderSubmit(form);
   } else if (form.id === 'review-form') {
     handleReviewSubmit(form);
+  } else if (form.id === 'service-contract-form') {
+    handleServiceContractSubmit(form);
+  } else if (form.id === 'service-concern-form') {
+    handleServiceConcernSubmit(form);
   }
 });
 
@@ -756,6 +885,178 @@ function handleOrderSubmit(form) {
   closeDialog();
   render();
   showToast('Demo order created. Continue with the simulated payment step.');
+}
+
+function handleServiceContractSubmit(form) {
+  const user = currentUser();
+  const error = form.querySelector('#service-contract-error');
+  const data = new FormData(form);
+  const title = String(data.get('title') || '').trim();
+  const category = String(data.get('category') || '');
+  const sellerEmail = String(data.get('seller') || '');
+  const scope = String(data.get('scope') || '').trim();
+  const price = Number(data.get('price'));
+  const approvalMode = String(data.get('approvalMode') || '');
+  const seller = state.users.find((candidate) => candidate.email === sellerEmail && candidate.role === 'seller');
+  const milestoneLines = String(data.get('milestones') || '').split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const milestones = [];
+
+  for (const line of milestoneLines) {
+    const separator = line.lastIndexOf('|');
+    const description = separator >= 0 ? line.slice(0, separator).trim() : '';
+    const amountText = separator >= 0 ? line.slice(separator + 1).trim() : '';
+    const amount = Number(amountText);
+    if (!description || !Number.isSafeInteger(amount) || amount <= 0) {
+      error.textContent = 'Each milestone must use “description | whole-number amount”.';
+      return;
+    }
+    milestones.push({
+      id: `stage-${crypto.randomUUID()}`,
+      description: description.slice(0, 160),
+      amount,
+      status: 'pending'
+    });
+  }
+  const milestoneTotal = milestones.reduce((total, milestone) => total + milestone.amount, 0);
+  if (!user || user.role !== 'buyer' || !user.demo || !seller || seller.email === user.email) {
+    error.textContent = 'Sign in as the buyer demo and choose another seller as provider.';
+    return;
+  }
+  if (!title || !scope || !['construction', 'repairs', 'professional', 'delivery', 'other'].includes(category)) {
+    error.textContent = 'Enter a title, service type, and written work scope.';
+    return;
+  }
+  if (!Number.isSafeInteger(price) || price <= 0 || price > 1000000000) {
+    error.textContent = 'Enter a whole-number total price between KES 1 and 1,000,000,000.';
+    return;
+  }
+  if (!['per-milestone', 'final'].includes(approvalMode)) {
+    error.textContent = 'Choose when the client will approve completed work.';
+    return;
+  }
+  if (milestones.length < 1 || milestones.length > 20 || milestoneTotal !== price) {
+    error.textContent = 'Add 1–20 milestones and make their amounts add up exactly to the agreed price.';
+    return;
+  }
+  const contract = {
+    id: `HP-SVC-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
+    title: title.slice(0, 100),
+    category,
+    scope: scope.slice(0, 1000),
+    price,
+    approvalMode,
+    buyerEmail: user.email,
+    buyerName: user.name,
+    sellerEmail: seller.email,
+    sellerName: seller.name,
+    status: 'proposed',
+    paymentStatus: 'not-configured',
+    milestones,
+    resolvedBy: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+  state.serviceContracts.unshift(contract);
+  if (!saveState()) return;
+  closeDialog();
+  render();
+  showToast('Agreement proposal sent. The seller must accept the scope and terms before work starts.');
+}
+
+function handleServiceContractAction(action, contractId, milestoneId) {
+  const user = currentUser();
+  const contract = state.serviceContracts.find((item) => item.id === contractId);
+  if (!user || !contract) return;
+  const isBuyer = contract.buyerEmail === user.email && user.role === 'buyer';
+  const isSeller = contract.sellerEmail === user.email && user.role === 'seller';
+  if (action === 'accept') {
+    if (!isSeller || contract.status !== 'proposed') return;
+    contract.status = 'active';
+  } else if (action === 'submit-stage') {
+    if (!isSeller || contract.status !== 'active') return;
+    const pending = contract.approvalMode === 'final'
+      ? contract.milestones.find((milestone) => milestone.status === 'pending')
+      : contract.milestones.find((milestone) => milestone.status !== 'approved');
+    if (!pending || pending.id !== milestoneId || pending.status !== 'pending') return;
+    const index = contract.milestones.indexOf(pending);
+    if (contract.approvalMode === 'per-milestone' &&
+        !contract.milestones.slice(0, index).every((milestone) => milestone.status === 'approved')) return;
+    pending.status = 'delivered';
+  } else if (action === 'approve-stage') {
+    if (!isBuyer || contract.status !== 'active' || contract.approvalMode !== 'per-milestone') return;
+    const pendingApproval = contract.milestones.find((milestone) => milestone.status === 'delivered');
+    if (!pendingApproval || pendingApproval.id !== milestoneId) return;
+    pendingApproval.status = 'approved';
+    if (contract.milestones.every((milestone) => milestone.status === 'approved')) {
+      contract.status = 'completed';
+      contract.paymentStatus = 'simulated';
+    }
+  } else if (action === 'approve-final') {
+    if (!isBuyer || contract.status !== 'active' || contract.approvalMode !== 'final' ||
+        !contract.milestones.length ||
+        !contract.milestones.every((milestone) => milestone.status === 'delivered')) return;
+    contract.milestones.forEach((milestone) => { milestone.status = 'approved'; });
+    contract.status = 'completed';
+    contract.paymentStatus = 'simulated';
+  } else if (action === 'raise-concern') {
+    if ((!isBuyer && !isSeller) || contract.status !== 'active') return;
+    openDialog(`
+      <span class="eyebrow">Service agreement · concern</span><h2 id="dialog-title">What needs attention?</h2>
+      <p class="dialog-lede">Describe the work or agreement concern. This pauses the demo workflow; it does not make a binding decision.</p>
+      <form class="form-grid" id="service-concern-form" data-contract="${escapeHtml(contract.id)}">
+        <label>Concern<textarea name="description" maxlength="1000" required></textarea></label>
+        <p class="form-error" id="service-concern-error" role="alert"></p>
+        <button class="button button-danger" type="submit">Record concern</button>
+      </form>`);
+    return;
+  } else if (action === 'resolve-concern') {
+    if ((!isBuyer && !isSeller) || contract.status !== 'disputed') return;
+    const resolvedBy = [...new Set([...(contract.resolvedBy || []), user.email])];
+    if (resolvedBy.includes(contract.buyerEmail) && resolvedBy.includes(contract.sellerEmail)) {
+      contract.status = 'active';
+      contract.concernNote = '';
+      contract.resolvedBy = [];
+    } else {
+      contract.resolvedBy = resolvedBy;
+    }
+  } else {
+    return;
+  }
+  contract.updatedAt = new Date().toISOString();
+  if (saveState()) {
+    closeDialog();
+    render();
+    showToast(action === 'accept'
+      ? 'Terms accepted. Work can now start.'
+      : action === 'submit-stage'
+        ? 'Stage marked delivered. Waiting for client review.'
+        : action.startsWith('approve')
+          ? 'Work approval recorded in this demo. No money was collected or released.'
+          : action === 'resolve-concern' && contract.status === 'active'
+            ? 'Both parties marked the concern resolved. The agreement can continue.'
+            : 'Your response was recorded for the other party.');
+  }
+}
+
+function handleServiceConcernSubmit(form) {
+  const user = currentUser();
+  const contract = state.serviceContracts.find((item) => item.id === form.dataset.contract);
+  const error = form.querySelector('#service-concern-error');
+  const description = String(new FormData(form).get('description') || '').trim();
+  if (!user || !contract ||
+      ![contract.buyerEmail, contract.sellerEmail].includes(user.email) ||
+      contract.status !== 'active' || !description) {
+    error.textContent = 'Enter a concern for an active agreement you participate in.';
+    return;
+  }
+  contract.status = 'disputed';
+  contract.concernNote = description.slice(0, 1000);
+  contract.resolvedBy = [];
+  contract.updatedAt = new Date().toISOString();
+  if (!saveState()) return;
+  closeDialog();
+  render();
+  showToast('Concern recorded. Both parties must agree before this demo workflow resumes.');
 }
 
 function handleReviewSubmit(form) {
