@@ -1,0 +1,374 @@
+HOLDPAY PROJECT - FILE-BY-FILE NOTES
+====================================
+
+Purpose
+-------
+This document explains the purpose of every project file tracked in Git at the
+time this guide was created. Paths are relative to the repository root.
+Generated build output, caches, IDE state, and local machine configuration are
+not included in the tracked-file inventory.
+
+Project overview
+----------------
+HoldPay is a Kenya-focused local-commerce concept with a browser prototype,
+Flutter Android/iOS starter, and an Odoo 18 backend addon. The website and app
+are prototypes; the backend payment status is intentionally not connected to a
+payment provider. This project does not hold or transfer real funds.
+
+ROOT: WEB PROTOTYPE AND PROJECT DOCUMENTATION
+---------------------------------------------
+
+.gitignore
+  Excludes local secrets, editor/OS files, Flutter and Dart caches/build
+  output, Android local.properties, and generated iOS Flutter configuration.
+
+index.html
+  Entry page for the browser prototype. Loads the brand, navigation, app
+  container, footer, dialog, stylesheet, and app.js.
+
+styles.css
+  Website layout, typography, colors, component styling, forms, cards,
+  marketplace/dashboard presentation, and responsive breakpoints.
+
+app.js
+  Client-side browser prototype behavior: sample marketplace and role
+  dashboards, browser-local demo data, signup/sign-in dialogs, listings,
+  simulated orders/milestones, reviews, and mediation walkthrough interactions.
+  It is not connected to the Odoo backend.
+
+holdpay-logo.svg
+  Reusable vector logo displayed by the browser prototype.
+
+BACKEND-API.md
+  Documents the Odoo JSON-RPC API, session authentication approach, request
+  examples, role and KYC gates, current payment limitations, and unimplemented
+  production integrations.
+
+ODOO-DEPLOYMENT.md
+  Odoo 18 hosting and installation guidance, addon scope, production decisions,
+  and the proposed HoldPay-for-Odoo extension.
+
+PARTNERSHIP-NOTES.md
+  Product and partnership concept notes, pilot discussion, and prototype
+  limitations for prospective payment and commerce partners.
+
+FLUTTER SOURCE PROJECT: holdpay_mobile/
+---------------------------------------
+
+holdpay_mobile/README.md
+  Flutter starter overview, run instructions, current demo screens, and notes
+  on future secure Odoo and KYC integration.
+
+holdpay_mobile/analysis_options.yaml
+  Dart analyzer and lint configuration for the Flutter source project.
+
+holdpay_mobile/pubspec.yaml
+  Flutter package metadata, Dart SDK range, dependencies, and Material assets
+  configuration.
+
+holdpay_mobile/pubspec.lock
+  Resolved Flutter/Dart dependency versions for repeatable dependency restore.
+
+holdpay_mobile/lib/main.dart
+  Shared Dart implementation of the HoldPay mobile concept app screens and
+  user interactions.
+
+holdpay_mobile/test/widget_test.dart
+  Flutter widget test for the starter app's initial interface.
+
+GENERATED FLUTTER PLATFORM PROJECT: holdpay_mobile_scaffold/
+-----------------------------------------------------------
+
+holdpay_mobile_scaffold/.gitignore
+  Flutter-generated ignore rules for this native Android/iOS project, caches,
+  build output, IDE files, and platform-generated files.
+
+holdpay_mobile_scaffold/.metadata
+  Flutter project metadata used by Flutter tooling to identify and maintain the
+  generated project.
+
+holdpay_mobile_scaffold/README.md
+  Flutter-generated platform project instructions and basic project metadata.
+
+holdpay_mobile_scaffold/analysis_options.yaml
+  Dart analyzer and lint configuration copied into the generated app project.
+
+holdpay_mobile_scaffold/pubspec.yaml
+  Package metadata and Flutter dependencies for the runnable platform scaffold.
+
+holdpay_mobile_scaffold/pubspec.lock
+  Resolved dependency versions for the runnable platform scaffold.
+
+holdpay_mobile_scaffold/lib/main.dart
+  HoldPay mobile app entry point. This is the app source included in the
+  generated Android/iOS project.
+
+holdpay_mobile_scaffold/test/widget_test.dart
+  Widget test included with the generated platform app.
+
+ANDROID PLATFORM FILES
+----------------------
+
+holdpay_mobile_scaffold/android/.gitignore
+  Ignores Android/Gradle build products and local Android IDE state.
+
+holdpay_mobile_scaffold/android/app/build.gradle.kts
+  App-level Gradle Kotlin DSL configuration, including Android app build
+  settings, SDK versions, and Flutter integration.
+
+holdpay_mobile_scaffold/android/app/src/debug/AndroidManifest.xml
+  Debug-build Android manifest configuration.
+
+holdpay_mobile_scaffold/android/app/src/main/AndroidManifest.xml
+  Main Android app manifest: application identity, permissions, launcher
+  activity, and platform declarations.
+
+holdpay_mobile_scaffold/android/app/src/profile/AndroidManifest.xml
+  Profile-build Android manifest configuration.
+
+holdpay_mobile_scaffold/android/app/src/main/kotlin/com/example/holdpay_mobile/MainActivity.kt
+  Android native launcher activity that hosts the Flutter application.
+
+holdpay_mobile_scaffold/android/app/src/main/res/drawable/launch_background.xml
+  Default Android launch-screen background drawable.
+
+holdpay_mobile_scaffold/android/app/src/main/res/drawable-v21/launch_background.xml
+  Android API 21+ launch-screen background drawable.
+
+holdpay_mobile_scaffold/android/app/src/main/res/values/styles.xml
+  Android light-mode launch/theme styles.
+
+holdpay_mobile_scaffold/android/app/src/main/res/values-night/styles.xml
+  Android dark-mode launch/theme styles.
+
+holdpay_mobile_scaffold/android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+  Android launcher icon at medium density.
+
+holdpay_mobile_scaffold/android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+  Android launcher icon at high density.
+
+holdpay_mobile_scaffold/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+  Android launcher icon at extra-high density.
+
+holdpay_mobile_scaffold/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+  Android launcher icon at extra-extra-high density.
+
+holdpay_mobile_scaffold/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+  Android launcher icon at extra-extra-extra-high density.
+
+holdpay_mobile_scaffold/android/build.gradle.kts
+  Root Android Gradle build configuration and shared plugin/repository setup.
+
+holdpay_mobile_scaffold/android/gradle.properties
+  Gradle JVM and Android build system properties.
+
+holdpay_mobile_scaffold/android/gradle/wrapper/gradle-wrapper.properties
+  Selects the Gradle distribution used by the Gradle wrapper.
+
+holdpay_mobile_scaffold/android/settings.gradle.kts
+  Android Gradle project settings, module inclusion, and Flutter plugin loader.
+
+IOS PLATFORM FILES
+------------------
+
+holdpay_mobile_scaffold/ios/.gitignore
+  Ignores generated Xcode, CocoaPods, and iOS build files.
+
+holdpay_mobile_scaffold/ios/Flutter/AppFrameworkInfo.plist
+  Metadata describing the Flutter framework embedded in the iOS app.
+
+holdpay_mobile_scaffold/ios/Flutter/Debug.xcconfig
+  Xcode build configuration for Flutter debug builds.
+
+holdpay_mobile_scaffold/ios/Flutter/Release.xcconfig
+  Xcode build configuration for Flutter release builds.
+
+holdpay_mobile_scaffold/ios/Runner.xcodeproj/project.pbxproj
+  Xcode project configuration: iOS targets, build settings, source membership,
+  asset catalogs, and signing/build configuration.
+
+holdpay_mobile_scaffold/ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+  Workspace metadata embedded inside the Xcode project.
+
+holdpay_mobile_scaffold/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+  Shared Xcode workspace migration/check metadata.
+
+holdpay_mobile_scaffold/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+  Shared Xcode workspace behavior and presentation settings.
+
+holdpay_mobile_scaffold/ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme
+  Shared Xcode scheme for building, running, testing, and archiving the Runner
+  iOS app.
+
+holdpay_mobile_scaffold/ios/Runner.xcworkspace/contents.xcworkspacedata
+  Top-level Xcode workspace metadata for opening the iOS runner.
+
+holdpay_mobile_scaffold/ios/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+  Shared checks and migration metadata for the iOS workspace.
+
+holdpay_mobile_scaffold/ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+  Shared workspace behavior settings for the iOS runner.
+
+holdpay_mobile_scaffold/ios/Runner/AppDelegate.swift
+  Native iOS application delegate that initializes the Flutter application.
+
+holdpay_mobile_scaffold/ios/Runner/SceneDelegate.swift
+  Native iOS scene lifecycle integration for the Runner app.
+
+holdpay_mobile_scaffold/ios/Runner/Info.plist
+  iOS app metadata, bundle configuration, supported interface settings, and
+  platform declarations.
+
+holdpay_mobile_scaffold/ios/Runner/Runner-Bridging-Header.h
+  Objective-C/Swift bridging header used by the iOS Flutter runner.
+
+holdpay_mobile_scaffold/ios/Runner/Base.lproj/LaunchScreen.storyboard
+  Native iOS launch screen shown while the Flutter app starts.
+
+holdpay_mobile_scaffold/ios/Runner/Base.lproj/Main.storyboard
+  Main iOS storyboard hosting the Flutter view controller.
+
+IOS APP ICON ASSETS
+-------------------
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json
+  Asset catalog manifest mapping iOS icon files to the icon sizes and idioms
+  required by Xcode.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png
+  1024-pixel iOS marketing/App Store icon.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png
+  20-point iOS app icon at 1x scale.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png
+  20-point iOS app icon at 2x scale.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png
+  20-point iOS app icon at 3x scale.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png
+  29-point iOS app icon at 1x scale.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png
+  29-point iOS app icon at 2x scale.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png
+  29-point iOS app icon at 3x scale.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png
+  40-point iOS app icon at 1x scale.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png
+  40-point iOS app icon at 2x scale.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png
+  40-point iOS app icon at 3x scale.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png
+  60-point iOS app icon at 2x scale.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png
+  60-point iOS app icon at 3x scale.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png
+  76-point iPad app icon at 1x scale.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png
+  76-point iPad app icon at 2x scale.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png
+  83.5-point iPad app icon at 2x scale.
+
+IOS LAUNCH IMAGE ASSETS
+-----------------------
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json
+  Asset catalog manifest assigning launch image files to iOS display scales.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png
+  Base-scale iOS launch image.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png
+  2x iOS launch image.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png
+  3x iOS launch image.
+
+holdpay_mobile_scaffold/ios/Runner/Assets.xcassets/LaunchImage.imageset/README.md
+  Flutter-generated notes about the iOS launch image asset.
+
+holdpay_mobile_scaffold/ios/RunnerTests/RunnerTests.swift
+  Native XCTest target entry point for iOS runner tests.
+
+ODOO 18 ADDON: holdpay_odoo/
+----------------------------
+
+holdpay_odoo/__init__.py
+  Loads the addon's controllers and Odoo model extensions.
+
+holdpay_odoo/__manifest__.py
+  Odoo module metadata, dependencies, install data files, and frontend CSS
+  asset registration.
+
+holdpay_odoo/controllers/__init__.py
+  Imports the addon website and API controller module.
+
+holdpay_odoo/controllers/main.py
+  Website onboarding routes and authenticated JSON-RPC API endpoints for
+  account role, account status, listings, agents, orders, milestones, cases,
+  and reviews. It enforces server-side role, verification, and ownership
+  checks. Payment is not configured or processed.
+
+holdpay_odoo/data/holdpay_sequence.xml
+  Defines the human-readable sequence used to assign references to HoldPay
+  orders/deals.
+
+holdpay_odoo/models/__init__.py
+  Imports the partner extension and HoldPay marketplace models.
+
+holdpay_odoo/models/res_partner.py
+  Extends Odoo contacts with HoldPay account role, identity/KYC status, seller
+  or agent business-verification status, and pickup-agent operating area.
+
+holdpay_odoo/models/marketplace.py
+  Defines Odoo records for seller listings, orders/deals, mediation cases, and
+  buyer reviews, including server-side data constraints and order references.
+
+holdpay_odoo/security/ir.model.access.csv
+  Grants portal users read-only model access and grants Odoo system
+  administrators full model access. API writes are performed through
+  controller checks.
+
+holdpay_odoo/security/holdpay_rules.xml
+  Record rules limiting portal reads to published/owned listings and deals,
+  cases, and reviews involving the logged-in user.
+
+holdpay_odoo/static/src/css/holdpay.css
+  Styles the HoldPay landing page, account onboarding, pending-verification,
+  role-selection, and related Odoo website templates.
+
+holdpay_odoo/views/partner_views.xml
+  Adds HoldPay role and verification fields to the Odoo contact form for
+  administrator review.
+
+holdpay_odoo/views/marketplace_views.xml
+  Defines administrator list/form views and the HoldPay menu for listings,
+  orders/payment status records, and mediation cases.
+
+holdpay_odoo/views/website_templates.xml
+  Defines QWeb pages for the HoldPay landing page, role selection, pending
+  mobile KYC, and verified account status.
+
+Important project boundaries
+----------------------------
+- The browser marketplace uses local demo data; it is not connected to Odoo.
+- The Flutter source demonstrates the user journey; it is not yet connected to
+  the Odoo API and performs no real KYC.
+- M-Pesa Till, Pochi la Biashara, M-Pesa Paybill, and GlobalPay are recorded as
+  possible payment method names only. No provider API, settlement, custody,
+  transfer, or refund is implemented.
+- KYC status must only be approved by a trusted verification process. Website
+  and mobile clients must not be trusted to set their own verified status.
+- Installation and live API operation require an Odoo 18 staging or production
+  server; static checks alone do not confirm runtime compatibility.
