@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="rule_holdpay_listing_portal_read" model="ir.rule">
+    <field name="name">HoldPay listings: public listings and own listings</field>
+    <field name="model_id" ref="model_holdpay_listing"/>
+    <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    <field name="domain_force">['|', ('seller_id', '=', user.partner_id.id), '&amp;', ('state', '=', 'published'), ('active', '=', True)]</field>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="rule_holdpay_deal_portal_read" model="ir.rule">
+    <field name="name">HoldPay deals: participating buyer, seller, or agent</field>
+    <field name="model_id" ref="model_holdpay_deal"/>
+    <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    <field name="domain_force">['|', '|', ('buyer_id', '=', user.partner_id.id), ('seller_id', '=', user.partner_id.id), ('agent_id', '=', user.partner_id.id)]</field>
+  </record>
+  <record id="rule_holdpay_case_portal_read" model="ir.rule">
+    <field name="name">HoldPay cases: deal participants and assigned agent</field>
+    <field name="model_id" ref="model_holdpay_case"/>
+    <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    <field name="domain_force">['|', '|', '|', ('reported_by_id', '=', user.partner_id.id), ('deal_id.buyer_id', '=', user.partner_id.id), ('deal_id.seller_id', '=', user.partner_id.id), ('agent_id', '=', user.partner_id.id)]</field>
+  </record>
+  <record id="rule_holdpay_review_portal_read" model="ir.rule">
+    <field name="name">HoldPay reviews: participating buyer or seller</field>
+    <field name="model_id" ref="model_holdpay_review"/>
+    <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    <field name="domain_force">['|', ('buyer_id', '=', user.partner_id.id), ('seller_id', '=', user.partner_id.id)]</field>
+  </record>
+</odoo>

@@ -14,9 +14,11 @@ Official references:
 - Provides `/holdpay` as a QWeb website landing page using the Odoo website layout.
 - Uses Odoo's native account registration and login pages.
 - Lets a logged-in account choose buyer, seller, or pickup-agent role.
-- Stores role and `pending_mobile_app` KYC status on the Odoo contact record. These fields are restricted to Odoo system administrators; the website controller updates only the logged-in user's own contact using a fixed field allowlist.
+- Stores role, KYC status, and seller/agent business-verification status on the Odoo contact record. These fields are restricted to Odoo system administrators; website and API onboarding set only the logged-in user's role and pending state.
 - Sends incomplete profiles to an app-KYC pending page. Only an Odoo administrator can change the status from the backend partner form.
-- Does not collect KYC documents on the website, process payments, or provide a live catalogue/checkout.
+- Provides Odoo models and authenticated JSON-RPC routes for listings, deals, pickup milestones, mediation cases, and post-completion reviews.
+- Restricts portal model access to reads; controlled API routes validate the caller and business state before creating or updating records.
+- Does not collect KYC documents, process payments, or provide a provider-backed checkout/settlement integration.
 
 Website role enrollment is not KYC verification. A production phone app must submit an authenticated verification result to a secure backend before any account is marked verified. The website must not trust a client-side flag.
 
@@ -77,8 +79,8 @@ Odoo's published [eCommerce product documentation](https://www.odoo.com/document
 - Add server-enforced access rules for catalogue publication, checkout, agent assignment, reviews, and order transitions once those Odoo modules are implemented.
 - Configure privacy notices, retention/deletion schedules, backups, access control, incident response, and Kenya-specific legal/regulatory review.
 
-The current addon is an Odoo website/onboarding foundation, not a production marketplace or escrow system.
+The addon now provides a backend prototype, but it is not a production marketplace or escrow system. Payment methods are recorded as preferences only; new orders remain `not_configured` until a real provider integration is built. The API details and example requests are in [BACKEND-API.md](./BACKEND-API.md).
 
 ## Android and iOS starter
 
-The Flutter source in `holdpay_mobile/` is the shared Android/iOS app starter. See [holdpay_mobile/README.md](./holdpay_mobile/README.md) for generating the native Android and iOS runners and running the app. The starter demonstrates role signup and app-only KYC screens but does not upload identity documents, verify users, or connect to Odoo. The Odoo addon currently has no mobile API routes; a secure server-side API and verification-provider integration are required before connecting these components.
+The Flutter source in `holdpay_mobile/` is the shared Android/iOS app starter. See [holdpay_mobile/README.md](./holdpay_mobile/README.md) for generating the native Android and iOS runners and running the app. The starter demonstrates role signup and app-only KYC screens but does not upload identity documents, verify users, or connect to Odoo. The addon now has authenticated mobile API routes, but the Flutter and browser clients are not wired to them; verification-provider integration is also required before production.

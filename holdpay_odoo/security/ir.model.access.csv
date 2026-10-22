@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_holdpay_listing_portal,holdpay.listing portal,model_holdpay_listing,base.group_portal,1,0,0,0
+access_holdpay_deal_portal,holdpay.deal portal,model_holdpay_deal,base.group_portal,1,0,0,0
+access_holdpay_case_portal,holdpay.case portal,model_holdpay_case,base.group_portal,1,0,0,0
+access_holdpay_review_portal,holdpay.review portal,model_holdpay_review,base.group_portal,1,0,0,0
+access_holdpay_listing_admin,holdpay.listing admin,model_holdpay_listing,base.group_system,1,1,1,1
+access_holdpay_deal_admin,holdpay.deal admin,model_holdpay_deal,base.group_system,1,1,1,1
+access_holdpay_case_admin,holdpay.case admin,model_holdpay_case,base.group_system,1,1,1,1
+access_holdpay_review_admin,holdpay.review admin,model_holdpay_review,base.group_system,1,1,1,1

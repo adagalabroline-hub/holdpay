@@ -1,12 +1,16 @@
 {
-    "name": "HoldPay Website",
-    "summary": "HoldPay Kenya website and mobile-app KYC onboarding",
-    "version": "18.0.1.0.0",
+    "name": "HoldPay Marketplace Backend",
+    "summary": "HoldPay onboarding, marketplace, order, and mobile API foundation",
+    "version": "18.0.2.0.0",
     "category": "Website",
     "license": "LGPL-3",
     "depends": ["website", "portal", "auth_signup"],
     "data": [
+        "security/ir.model.access.csv",
+        "security/holdpay_rules.xml",
+        "data/holdpay_sequence.xml",
         "views/partner_views.xml",
+        "views/marketplace_views.xml",
         "views/website_templates.xml",
     ],
     "assets": {

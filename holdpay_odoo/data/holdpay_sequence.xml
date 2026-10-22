@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="sequence_holdpay_deal" model="ir.sequence">
+    <field name="name">HoldPay deal</field>
+    <field name="code">holdpay.deal</field>
+    <field name="prefix">HP%(year)s-</field>
+    <field name="padding">6</field>
+    <field name="company_id" eval="False"/>
+  </record>
+</odoo>

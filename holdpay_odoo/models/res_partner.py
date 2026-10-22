@@ -29,6 +29,20 @@ class ResPartner(models.Model):
         index=True,
         groups="base.group_system",
     )
+    holdpay_business_status = fields.Selection(
+        [
+            ("not_required", "Not required"),
+            ("pending_mobile_app", "Pending mobile app business verification"),
+            ("pending_review", "Pending verification review"),
+            ("verified", "Verified"),
+            ("rejected", "Not approved"),
+        ],
+        string="HoldPay business verification",
+        default="not_required",
+        copy=False,
+        index=True,
+        groups="base.group_system",
+    )
     holdpay_agent_area = fields.Char(
         string="HoldPay pickup operating area",
         copy=False,

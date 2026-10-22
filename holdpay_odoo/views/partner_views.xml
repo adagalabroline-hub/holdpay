@@ -10,6 +10,7 @@
           <group>
             <field name="holdpay_role"/>
             <field name="holdpay_kyc_status"/>
+            <field name="holdpay_business_status" invisible="holdpay_role not in ('seller', 'agent')"/>
             <field name="holdpay_agent_area" invisible="holdpay_role != 'agent'"/>
           </group>
           <div class="text-muted">KYC documents are handled in the HoldPay phone app. Do not upload identity documents to this Odoo contact record.</div>

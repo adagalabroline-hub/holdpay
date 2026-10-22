@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_holdpay_listing_list" model="ir.ui.view">
+    <field name="name">holdpay.listing.list</field>
+    <field name="model">holdpay.listing</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="name"/>
+        <field name="seller_id"/>
+        <field name="price"/>
+        <field name="currency_id"/>
+        <field name="state"/>
+        <field name="active"/>
+      </list>
+    </field>
+  </record>
+  <record id="view_holdpay_deal_list" model="ir.ui.view">
+    <field name="name">holdpay.deal.list</field>
+    <field name="model">holdpay.deal</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="reference"/>
+        <field name="listing_id"/>
+        <field name="buyer_id"/>
+        <field name="seller_id"/>
+        <field name="agent_id"/>
+        <field name="amount"/>
+        <field name="payment_method"/>
+        <field name="payment_status"/>
+        <field name="payment_reference"/>
+        <field name="state"/>
+      </list>
+    </field>
+  </record>
+  <record id="view_holdpay_deal_form" model="ir.ui.view">
+    <field name="name">holdpay.deal.form</field>
+    <field name="model">holdpay.deal</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <group>
+              <field name="reference" readonly="1"/>
+              <field name="listing_id" readonly="1"/>
+              <field name="buyer_id" readonly="1"/>
+              <field name="seller_id" readonly="1"/>
+              <field name="agent_id"/>
+            </group>
+            <group>
+              <field name="amount"/>
+              <field name="currency_id"/>
+              <field name="payment_method" readonly="1"/>
+              <field name="payment_status"/>
+              <field name="payment_reference"/>
+              <field name="state"/>
+            </group>
+          </group>
+          <group>
+            <field name="buyer_note" readonly="1"/>
+          </group>
+          <div class="alert alert-warning" role="alert">
+            Only record payment confirmation after verifying it directly with the configured provider. This record does not hold or release funds.
+          </div>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="view_holdpay_case_list" model="ir.ui.view">
+    <field name="name">holdpay.case.list</field>
+    <field name="model">holdpay.case</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="deal_id"/>
+        <field name="reported_by_id"/>
+        <field name="agent_id"/>
+        <field name="state"/>
+        <field name="create_date"/>
+      </list>
+    </field>
+  </record>
+  <record id="view_holdpay_case_form" model="ir.ui.view">
+    <field name="name">holdpay.case.form</field>
+    <field name="model">holdpay.case</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <field name="deal_id" readonly="1"/>
+            <field name="reported_by_id" readonly="1"/>
+            <field name="agent_id" readonly="1"/>
+            <field name="state"/>
+          </group>
+          <group>
+            <field name="description" readonly="1"/>
+            <field name="resolution_note"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="action_holdpay_listings" model="ir.actions.act_window">
+    <field name="name">Listings</field>
+    <field name="res_model">holdpay.listing</field>
+    <field name="view_mode">list,form</field>
+  </record>
+  <record id="action_holdpay_deals" model="ir.actions.act_window">
+    <field name="name">Orders and payments</field>
+    <field name="res_model">holdpay.deal</field>
+    <field name="view_mode">list,form</field>
+  </record>
+  <record id="action_holdpay_cases" model="ir.actions.act_window">
+    <field name="name">Mediation cases</field>
+    <field name="res_model">holdpay.case</field>
+    <field name="view_mode">list,form</field>
+  </record>
+  <menuitem id="menu_holdpay_root" name="HoldPay" sequence="40" groups="base.group_system"/>
+  <menuitem id="menu_holdpay_listings" name="Listings" parent="menu_holdpay_root" action="action_holdpay_listings" sequence="10" groups="base.group_system"/>
+  <menuitem id="menu_holdpay_deals" name="Orders and payments" parent="menu_holdpay_root" action="action_holdpay_deals" sequence="20" groups="base.group_system"/>
+  <menuitem id="menu_holdpay_cases" name="Mediation cases" parent="menu_holdpay_root" action="action_holdpay_cases" sequence="30" groups="base.group_system"/>
+</odoo>
