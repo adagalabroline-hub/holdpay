@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="holdpay_home" name="HoldPay Home">
+    <t t-call="website.layout">
+      <t t-set="title">HoldPay | Local trade, clearer deals</t>
+      <div id="wrap" class="oe_structure holdpay-page">
+        <section class="hp-hero">
+          <div class="container">
+            <div class="hp-hero-copy">
+              <span class="hp-eyebrow">Local trade, clearer deals</span>
+              <h1>Discover local.<br/><em>Deal with confidence.</em></h1>
+              <p>HoldPay brings buyers, sellers, and local pickup agents into one simple journey—from finding a product to confirming collection.</p>
+              <div class="hp-actions">
+                <a class="hp-button hp-button-primary" href="/web/signup?redirect=/my/holdpay/role">Create an account <span aria-hidden="true">→</span></a>
+                <a class="hp-button hp-button-outline" href="/web/login?redirect=/my/holdpay">Sign in</a>
+              </div>
+              <p class="hp-note">Website accounts remain pending until KYC is completed and approved in the HoldPay phone app.</p>
+            </div>
+            <div class="hp-gallery" aria-label="Local products and makers">
+              <div class="hp-gallery-large">
+                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&amp;fit=crop&amp;w=1100&amp;q=85" alt="Customers browsing a local clothing shop"/>
+                <span>Discover something special</span>
+              </div>
+              <div class="hp-gallery-small">
+                <img src="https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&amp;fit=crop&amp;w=600&amp;q=85" alt="Handmade home goods"/>
+              </div>
+              <div class="hp-gallery-stamp">Made<br/>for Kenya</div>
+            </div>
+          </div>
+        </section>
+        <section class="hp-roles">
+          <div class="container">
+            <div class="hp-section-heading">
+              <span class="hp-eyebrow">Choose your role</span>
+              <h2>One marketplace. Three ways to take part.</h2>
+            </div>
+            <div class="hp-role-grid">
+              <article><span class="hp-role-icon">B</span><h3>Buyer</h3><p>Explore offers, agree on a deal, and collect from a chosen pickup point.</p></article>
+              <article><span class="hp-role-icon">S</span><h3>Seller</h3><p>Build your presence and share your products with local buyers.</p></article>
+              <article><span class="hp-role-icon">A</span><h3>Pickup agent</h3><p>Support local handovers and help customers navigate collection.</p></article>
+            </div>
+          </div>
+        </section>
+        <section class="hp-how">
+          <div class="container">
+            <span class="hp-eyebrow">A clearer journey</span>
+            <h2>Agree. Pay through an approved flow. Collect. Confirm.</h2>
+            <p>Any payment, funds handling, delivery, and dispute process must be configured and approved before real transactions are enabled.</p>
+          </div>
+        </section>
+      </div>
+    </t>
+  </template>
+
+  <template id="holdpay_role_form" name="HoldPay Account Type">
+    <t t-call="website.layout">
+      <t t-set="title">Choose your HoldPay account type</t>
+      <div id="wrap" class="container hp-form-page">
+        <div class="hp-form-card">
+          <span class="hp-eyebrow">One more step</span>
+          <h1>Choose your account type</h1>
+          <p>After this step your website profile stays incomplete until you finish KYC in the HoldPay phone app.</p>
+          <form action="/my/holdpay/role" method="post">
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+            <label for="holdpay_role">I am joining as</label>
+            <select id="holdpay_role" name="holdpay_role" required="required">
+              <option value="">Choose a role</option>
+              <option value="buyer" t-att-selected="'selected' if selected_role == 'buyer' else None">Buyer</option>
+              <option value="seller" t-att-selected="'selected' if selected_role == 'seller' else None">Seller</option>
+              <option value="agent" t-att-selected="'selected' if selected_role == 'agent' else None">Pickup agent</option>
+            </select>
+            <label for="holdpay_agent_area">Operating area (pickup agents)</label>
+            <input id="holdpay_agent_area" name="holdpay_agent_area" maxlength="80" placeholder="e.g. Nakuru town"/>
+            <p t-if="error" class="hp-error" role="alert"><t t-esc="error"/></p>
+            <button type="submit" class="hp-button hp-button-primary">Continue to pending account</button>
+          </form>
+          <p class="hp-small-note">KYC requirements: Kenyan citizenship and age 18+ for all users. Sellers and pickup agents must also complete business verification in the phone app. This website does not collect KYC documents.</p>
+        </div>
+      </div>
+    </t>
+  </template>
+
+  <template id="holdpay_kyc_pending" name="HoldPay KYC Pending">
+    <t t-call="website.layout">
+      <t t-set="title">HoldPay account pending mobile app KYC</t>
+      <div id="wrap" class="container hp-form-page">
+        <div class="hp-form-card">
+          <span class="hp-eyebrow">Website sign-up received</span>
+          <h1>Your account is incomplete.</h1>
+          <p t-if="partner.holdpay_role == 'agent'">Complete KYC in the HoldPay phone app to verify your Kenyan citizenship, age, identity, and pickup-agent business registration.</p>
+          <p t-elif="partner.holdpay_role == 'seller'">Complete KYC in the HoldPay phone app to verify your Kenyan citizenship, age, identity, and seller business registration.</p>
+          <p t-else="">Complete KYC in the HoldPay phone app to verify your Kenyan citizenship, age, and identity.</p>
+          <div class="hp-status-list">
+            <div class="is-done"><span>1</span><div><strong>Website profile</strong><small>Created for <t t-esc="partner.email or partner.name"/></small></div></div>
+            <div class="is-current"><span>2</span><div><strong>Mobile app verification</strong><small>Complete the required checks in the HoldPay phone app.</small></div></div>
+            <div><span>3</span><div><strong>Account activation</strong><small>Trading features unlock only after verification is approved.</small></div></div>
+          </div>
+          <div class="hp-warning">The app link and KYC verification service are not connected in this deployment. Your account remains pending; no KYC files were collected by this website.</div>
+          <a class="hp-button hp-button-outline" href="/web/session/logout?redirect=/holdpay">Sign out</a>
+        </div>
+      </div>
+    </t>
+  </template>
+
+  <template id="holdpay_account_ready" name="HoldPay Verified Account">
+    <t t-call="website.layout">
+      <t t-set="title">HoldPay account</t>
+      <div id="wrap" class="container hp-form-page">
+        <div class="hp-form-card">
+          <span class="hp-eyebrow">HoldPay account</span>
+          <h1>Verification complete.</h1>
+          <p>Your account has been marked verified by an authorized Odoo administrator. Marketplace and payment features still need to be configured separately before launch.</p>
+          <a class="hp-button hp-button-primary" href="/holdpay">Return to HoldPay</a>
+        </div>
+      </div>
+    </t>
+  </template>
+</odoo>

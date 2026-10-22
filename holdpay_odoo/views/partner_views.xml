@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_partner_form_holdpay" model="ir.ui.view">
+    <field name="name">res.partner.form.holdpay</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//notebook" position="inside">
+        <page string="HoldPay" name="holdpay">
+          <group>
+            <field name="holdpay_role"/>
+            <field name="holdpay_kyc_status"/>
+            <field name="holdpay_agent_area" invisible="holdpay_role != 'agent'"/>
+          </group>
+          <div class="text-muted">KYC documents are handled in the HoldPay phone app. Do not upload identity documents to this Odoo contact record.</div>
+        </page>
+      </xpath>
+    </field>
+  </record>
+</odoo>

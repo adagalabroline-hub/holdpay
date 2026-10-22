@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Explore local goods and services with HoldPay, a working browser prototype for buyer, seller, and pickup agent journeys."
+    />
+    <meta name="theme-color" content="#f7f8f3" />
+    <title>HoldPay | Local trade, clearer deals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#" data-home aria-label="HoldPay home">
+        <img src="holdpay-logo.svg" alt="" />
+        <span>HoldPay</span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button type="button" data-view="marketplace">Explore</button>
+        <button type="button" data-view="how-it-works">How it works</button>
+      </nav>
+      <div class="header-actions" id="header-actions"></div>
+    </header>
+
+    <main id="app" tabindex="-1">
+      <div class="loading-state" role="status">Loading HoldPay demo…</div>
+    </main>
+
+    <footer class="site-footer">
+      <a class="brand" href="#" data-home aria-label="HoldPay home">
+        <img src="holdpay-logo.svg" alt="" />
+        <span>HoldPay</span>
+      </a>
+      <p>Interactive concept prototype. No real payments are made or held.</p>
+      <a href="PARTNERSHIP-NOTES.md">Partnership notes</a>
+    </footer>
+
+    <dialog class="app-dialog" id="app-dialog" aria-labelledby="dialog-title">
+      <button class="dialog-close" type="button" aria-label="Close" data-close>&times;</button>
+      <div id="dialog-content"></div>
+    </dialog>
+
+    <div class="toast-region" aria-live="polite" aria-atomic="true" id="toast-region"></div>
+    <script src="app.js"></script>
+  </body>
+</html>

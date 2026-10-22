@@ -1,0 +1,37 @@
+# Local credentials and machine-specific configuration
+.env
+.env.*
+!.env.example
+*.local
+
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+
+# JavaScript tooling
+node_modules/
+npm-debug.log*
+
+# Flutter and Dart generated files
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+coverage/
+.widget_preview/
+
+# Android machine-specific and build files
+**/android/local.properties
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+
+# iOS generated Flutter configuration and build files
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/.last_build_id
